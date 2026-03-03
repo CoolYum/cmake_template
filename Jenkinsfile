@@ -64,7 +64,7 @@ spec:
                         cmake -S . -B build \
                             -G Ninja \
                             -DCMAKE_BUILD_TYPE=Release \
-                            -DCMAKE_CXX_STANDARD=17 \
+                            -DCMAKE_CXX_STANDARD=23 \
                             -Dcmake_template_ENABLE_HARDENING=OFF \
                             -Dcmake_template_ENABLE_COVERAGE=OFF \
                             -Dcmake_template_ENABLE_CLANG_TIDY=OFF \
