@@ -2,6 +2,8 @@ pipeline {
     agent {
         kubernetes {
             label 'cpp-builder'
+            podRetention always()
+            idleMinutes 60
             yaml '''
 apiVersion: v1
 kind: Pod
