@@ -8,7 +8,7 @@ kind: Pod
 spec:
   containers:
   - name: cpp
-    image: ubuntu:22.04
+    image: ubuntu:24.04
     command: ["sleep", "infinity"]
     resources:
       requests:
