@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.28)
 
 # Disable modules support, this is broken with clang-tidy at the moment
 cmake_policy(SET CMP0155 OLD) 
