@@ -108,7 +108,9 @@ spec:
                 container('cpp') {
                     sh '''
                         mkdir -p artifacts
-                        find build -maxdepth 1 -type f -executable \
+                        find build -type f -executable \
+                            ! -path "*/CMakeFiles/*" \
+                            ! -path "*/_deps/*" \
                             -exec cp {} artifacts/ \\;
                         ls -lh artifacts/
                     '''
