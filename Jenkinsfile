@@ -107,7 +107,7 @@ spec:
                     sh '''
                         mkdir -p artifacts
                         find build -maxdepth 1 -type f -executable \
-                            -exec cp {} artifacts/ \;
+                            -exec cp {} artifacts/ \\;
                         ls -lh artifacts/
                     '''
                 }
