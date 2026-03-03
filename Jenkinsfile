@@ -9,24 +9,22 @@ spec:
   containers:
   - name: cpp
     image: ubuntu:24.04
+    imagePullPolicy: IfNotPresent
     command: ["sleep", "infinity"]
     resources:
       requests:
         memory: "1Gi"
         cpu: "500m"
       limits:
-        memory: "2Gi"
-        cpu: "1000m"
+        memory: "4Gi"
+        cpu: "2000m"
 '''
         }
     }
 
     options {
-        // 构建超时 30 分钟
-        timeout(time: 30, unit: 'MINUTES')
-        // 保留最近 10 次构建记录
+        timeout(time: 60, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '10'))
-        // 显示时间戳
         timestamps()
     }
 
@@ -36,15 +34,24 @@ spec:
                 container('cpp') {
                     sh '''
                         apt-get update -qq
-                        DEBIAN_FRONTEND=noninteractive apt-get install -y \
+                        DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
                             cmake \
                             gcc \
                             g++ \
                             ninja-build \
+                            make \
                             git \
-                            --no-install-recommends
+                            curl \
+                            ca-certificates \
+                            pkg-config \
+                            python3 \
+                            file
+                        echo "=== 工具版本 ==="
                         cmake --version
                         gcc --version
+                        g++ --version
+                        ninja --version
+                        git --version
                     '''
                 }
             }
@@ -55,6 +62,7 @@ spec:
                 container('cpp') {
                     sh '''
                         cmake -S . -B build \
+                            -G Ninja \
                             -DCMAKE_BUILD_TYPE=Release \
                             -DCMAKE_CXX_STANDARD=17 \
                             -Dcmake_template_ENABLE_HARDENING=OFF \
@@ -88,7 +96,6 @@ spec:
             }
             post {
                 always {
-                    // 如果有 JUnit 格式测试报告可在此处收集
                     echo '测试阶段完成'
                 }
             }
@@ -100,7 +107,7 @@ spec:
                     sh '''
                         mkdir -p artifacts
                         find build -maxdepth 1 -type f -executable \
-                            -exec cp {} artifacts/ \\;
+                            -exec cp {} artifacts/ \;
                         ls -lh artifacts/
                     '''
                 }
@@ -111,10 +118,10 @@ spec:
 
     post {
         success {
-            echo '✅ 构建成功！'
+            echo '构建成功！'
         }
         failure {
-            echo '❌ 构建失败，请检查日志'
+            echo '构建失败，请检查日志'
         }
         always {
             echo "构建耗时: ${currentBuild.durationString}"
